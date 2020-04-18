@@ -22,5 +22,55 @@ const fetchWaitingBuild = (limit = 25, offset = 0) => {
     })
 };
 
+const setRunBuild = (buildId) => {
+    return new Promise((resolve, reject) => {
+        axiosInstance.post('/build/start', {
+            buildId: buildId,
+            dateTime: (new Date()).toISOString()
+        }).then(() => {
+            resolve(true);
+        }).catch((err) => {
+            reject(err);
+        })
+    });
+};
 
-module.exports = { fetchWaitingBuild };
+const cancelBuild = (buildId) => {
+    return new Promise((resolve, reject) => {
+        axiosInstance.post('/build/cancel', {
+            buildId: buildId
+        }).then(() => {
+            resolve(true);
+        }).catch((err) => {
+            reject(err);
+        })
+    });
+};
+
+const setFinishBuild = (buildId, duration, isSuccess, buildLog) => {
+    return new Promise((resolve, reject) => {
+        axiosInstance.post('/build/cancel', {
+            buildId: buildId,
+            duration: duration,
+            success: isSuccess,
+            buildLog: buildLog
+        }).then(() => {
+            resolve(true);
+        }).catch((err) => {
+            reject(err);
+        })
+    });
+};
+
+const fetchSettings = () => {
+    return new Promise((resolve, reject) => {
+        axiosInstance.get('/conf').then((res) => {
+            const {data: result} = res;
+            resolve(result.data);
+        }).catch((err) => {
+            reject(err);
+        })
+    });
+};
+
+module.exports = { fetchSettings, fetchWaitingBuild, setRunBuild, cancelBuild, setFinishBuild };
