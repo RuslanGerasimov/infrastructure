@@ -1,5 +1,6 @@
-const {fetchSettings, fetchWaitingBuild} = require('./api');
-const {getFreeAgent} = require('../agents/agent');
+const {fetchSettings, fetchWaitingBuild, setRunBuild} = require('./api');
+const {getFreeAgent, setAgentWorkStatus} = require('../agents/agent');
+const {sendBuildToBuild} = require('./agent');
 const appConfig = {};
 
 
@@ -10,28 +11,30 @@ const init = () => {
     })
 };
 
-const runBuild = () => {
-    fetchWaitingBuild().then((build) => {
-        if(build) {
-            console.log('need to build', build);
-        }
-    })
+const runBuild = async (agent) => {
+    const build = await fetchWaitingBuild();
+    if(build) {
+        await setRunBuild(build.id);
+        await sendBuildToBuild(agent, build, "FAKE", "FAKE");
+        setAgentWorkStatus(agent, build.id);
+    }
 };
 
 const runApp = () => {
     init().then(() => {
-        setInterval(() => {
+        const a = setInterval(() => {
             const agent = getFreeAgent();
-            if(agent) {
-                runBuild();
+            if (agent) {
+                clearInterval(a);
+                runBuild(agent);
             }
         }, 7000)
     }).catch((err) => {
-        if(err.status === 500) {
+        if (err.status === 500) {
             console.log('try to rerun application');
             runApp();
         }
     })
 };
 
-module.exports = { runApp };
+module.exports = {runApp};

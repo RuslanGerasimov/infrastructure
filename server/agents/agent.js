@@ -8,6 +8,7 @@ const addAgent = (host, port) => {
         agents.push({
             host,
             port,
+            buildId: null,
             isFree: true
         });
         console.log('agent added', host, port);
@@ -16,9 +17,17 @@ const addAgent = (host, port) => {
 
 const getFreeAgent = () => agents.find((agent) => agent.isFree);
 
-const setAgentWorkStatus = (host, port, isFree) => {
+const setAgentWorkStatus = (agent, buildId) => {
+    const {host, port} = agent;
     const agentIndex = agents.findIndex(getAgent(host, port));
-    agents[agentIndex].isFree = !!isFree;
+    agents[agentIndex].isFree = false;
+    agents[agentIndex].buildId = buildId;
 };
 
-module.exports = { getFreeAgent, addAgent, setAgentWorkStatus };
+const resetAgent = (buildId) => {
+    const agentIndex = agents.findIndex((agent) => agent.buildId === buildId);
+    agents[agentIndex].isFree = true;
+    agents[agentIndex].buildId = null;
+};
+
+module.exports = { getFreeAgent, addAgent, setAgentWorkStatus, resetAgent };

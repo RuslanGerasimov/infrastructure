@@ -22,6 +22,18 @@ const fetchWaitingBuild = (limit = 25, offset = 0) => {
     })
 };
 
+const fetchBuild = (id) => {
+    return new Promise((resolve, reject) => {
+        axiosInstance.get('/build/details?buildId=' + id)
+            .then((res) => {
+                const result = res.data;
+                resolve(result.data);
+            }).catch((err) => {
+                reject(err);
+            })
+    });
+};
+
 const setRunBuild = (buildId) => {
     return new Promise((resolve, reject) => {
         axiosInstance.post('/build/start', {
@@ -49,7 +61,7 @@ const cancelBuild = (buildId) => {
 
 const setFinishBuild = (buildId, duration, isSuccess, buildLog) => {
     return new Promise((resolve, reject) => {
-        axiosInstance.post('/build/cancel', {
+        axiosInstance.post('/build/finish', {
             buildId: buildId,
             duration: duration,
             success: isSuccess,
@@ -57,6 +69,7 @@ const setFinishBuild = (buildId, duration, isSuccess, buildLog) => {
         }).then(() => {
             resolve(true);
         }).catch((err) => {
+            console.log(err);
             reject(err);
         })
     });
@@ -73,4 +86,4 @@ const fetchSettings = () => {
     });
 };
 
-module.exports = { fetchSettings, fetchWaitingBuild, setRunBuild, cancelBuild, setFinishBuild };
+module.exports = { fetchSettings, fetchWaitingBuild, setRunBuild, cancelBuild, setFinishBuild, fetchBuild };

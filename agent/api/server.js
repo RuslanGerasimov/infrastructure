@@ -14,8 +14,9 @@ const notifyServer = (port, host) => {
 
 const notifyServerWithBuildResult = (buildId, status, log) => {
     axios.post('/notify-build-result', {
-        host: host,
-        port: port
+        id: buildId,
+        status: status,
+        log: log
     }).then(() => {
         console.log('Serer notified')
     }).catch(() => {
@@ -24,5 +25,6 @@ const notifyServerWithBuildResult = (buildId, status, log) => {
 };
 
 module.exports = {
-    notifyServer
+    notifyServer,
+    notifyServerWithBuildResult
 };
