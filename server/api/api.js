@@ -17,7 +17,15 @@ const fetchWaitingBuild = (limit = 25, offset = 0) => {
                     resolve(null);
                 }
             }).catch((err) => {
-                reject(err);
+                if(err.status === 500) {
+                    setTimeout(() => {
+                        fetchWaitingBuild(limit, offset)
+                            .then((data) => { resolve(data) })
+                            .catch((err) => { reject(err) })
+                    }, 300);
+                } else {
+                    reject(err);
+                }
             })
     })
 };
@@ -29,7 +37,15 @@ const fetchBuild = (id) => {
                 const result = res.data;
                 resolve(result.data);
             }).catch((err) => {
-                reject(err);
+                if(err.status === 500) {
+                    setTimeout(() => {
+                        fetchBuild(id)
+                            .then((data) => { resolve(data) })
+                            .catch((err) => { reject(err) })
+                    }, 300);
+                } else {
+                    reject(err);
+                }
             })
     });
 };
@@ -42,7 +58,15 @@ const setRunBuild = (buildId) => {
         }).then(() => {
             resolve(true);
         }).catch((err) => {
-            reject(err);
+            if(err.status === 500) {
+                setTimeout(() => {
+                    setRunBuild(buildId)
+                        .then((data) => { resolve(data) })
+                        .catch((err) => { reject(err) })
+                }, 300);
+            } else {
+                reject(err);
+            }
         })
     });
 };
@@ -54,7 +78,15 @@ const cancelBuild = (buildId) => {
         }).then(() => {
             resolve(true);
         }).catch((err) => {
-            reject(err);
+            if(err.status === 500) {
+                setTimeout(() => {
+                    cancelBuild(buildId)
+                        .then((data) => { resolve(data) })
+                        .catch((err) => { reject(err) })
+                }, 300);
+            } else {
+                reject(err);
+            }
         })
     });
 };
@@ -69,8 +101,15 @@ const setFinishBuild = (buildId, duration, isSuccess, buildLog) => {
         }).then(() => {
             resolve(true);
         }).catch((err) => {
-            console.log(err);
-            reject(err);
+            if(err.status === 500) {
+                setTimeout(() => {
+                    setFinishBuild(buildId, duration, isSuccess, buildLog)
+                        .then((data) => { resolve(data) })
+                        .catch((err) => { reject(err) })
+                }, 300);
+            } else {
+                reject(err);
+            }
         })
     });
 };
@@ -81,7 +120,15 @@ const fetchSettings = () => {
             const {data: result} = res;
             resolve(result.data);
         }).catch((err) => {
-            reject(err);
+            if(err.status === 500) {
+                setTimeout(() => {
+                    fetchSettings()
+                        .then((data) => { resolve(data) })
+                        .catch((err) => { reject(err) })
+                }, 300);
+            } else {
+                reject(err);
+            }
         })
     });
 };

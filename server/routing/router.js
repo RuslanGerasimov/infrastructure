@@ -15,12 +15,14 @@ router.post('/notify-agent', (req, res) => {
 router.post('/notify-build-result', async (req, res) => {
     const {id, status, log} = req.body;
     resetAgent(id);
-    const date = new Date();
-    const endDate = date.getTime();
+    const endDate = new Date();
+    const timeOffset = endDate.getTimezoneOffset();
     const build = await fetchBuild(id);
+
     if(build) {
-        const startDate = Date.parse(build.start);
-        const duration = Math.round((endDate - startDate) / (Math.pow(10, 6)));
+        const startDate = new Date(build.start);
+        const duration = Math.round((endDate - startDate + timeOffset * 60 * 1000) / 1000);
+        console.log(startDate, endDate, duration);
         await setFinishBuild(id, duration, !!status, log);
     }
     res.status(200).json('ok');

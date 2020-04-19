@@ -7,7 +7,7 @@ const sendBuildToBuild = (agent, build, gitRepo, command) => {
             id: build.id,
             address: gitRepo,
             commitHash: build.commitHash,
-            command: command
+            buildCommand: command
         }).then(() => {
             resolve(true);
         }).catch(() => {
